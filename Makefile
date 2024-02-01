@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -std=c++20 -Wall -O3 
+CXXFLAGS = -std=c++20 -Wall -O3
 
 # Source file
 SRC = pthread.cpp timer.cpp
@@ -15,7 +15,7 @@ $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
 
 # Run rule
-run: $(TARGET)
+run:$(TARGET)
 	./$(TARGET)
 
 # Clean rule

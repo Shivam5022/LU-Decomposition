@@ -1,4 +1,4 @@
-#include "timer.h"
+#include "timer.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -7,8 +7,8 @@
 
 #define VERIFY 0
 
-int n = 8000;
-int numThreads = 3;
+int n = 600;
+int numThreads = 6;
 std::vector<std::vector<double>> *matrix;
 std::vector<std::vector<double>> *matrix_1;
 std::vector<std::vector<double>> *L;
@@ -17,6 +17,7 @@ std::vector<int> _pi;
 
 struct ThreadData {
     int k, thread_id;
+    ThreadData(int k, int thread_id) : k(k), thread_id(thread_id) {}
 };
 
 void *initialize(void *arg) {
@@ -27,7 +28,7 @@ void *initialize(void *arg) {
 
     for (int i = thread_id; i < n; i += numThreads) {
         for (int j = 0; j < n; ++j) {
-            (*matrix)[i][j] = dis(gen);
+            (*matrix)[i][j] = dis(gen) + 1;
             (*matrix_1)[i][j] = (*matrix)[i][j];
             (*U)[i][j] = 0;
             (*L)[i][j] = (j == i ? 1 : 0);
@@ -46,7 +47,6 @@ void *update(void *arg) {
             (*matrix)[i][j] -= (((*U)[k][j]) * ((*L)[i][k]));
         }
     }
-
     return NULL;
 }
 
@@ -79,6 +79,10 @@ matrixMultiply(const std::vector<std::vector<double>> *A,
 }
 
 int main() {
+
+    std::cout << "Number of Threads: " << numThreads << '\n';
+    std::cout << "Matrix Dimention: " << n << '\n';
+
     matrix = new std::vector<std::vector<double>>(n, std::vector<double>(n));
     matrix_1 = new std::vector<std::vector<double>>(n, std::vector<double>(n));
     L = new std::vector<std::vector<double>>(n, std::vector<double>(n));
@@ -89,7 +93,7 @@ int main() {
 
     pthread_t threads[numThreads];
 
-    for (int i = 0; i < numThreads; ++i) {
+    for (long i = 0; i < numThreads; ++i) {
         pthread_create(&threads[i], NULL, initialize, (void *)i);
     }
 
@@ -118,7 +122,7 @@ int main() {
             }
 
             if (k != kk) {
-                // swap_ping things here!
+                // swapping things here!
                 std::swap(_pi[k], _pi[kk]);
                 for (int j = 0; j < n; j++) {
                     std::swap((*matrix)[k][j], (*matrix)[kk][j]);
@@ -135,11 +139,11 @@ int main() {
                 (*U)[k][i] = (*matrix)[k][i];
             }
 
-            struct ThreadData args[numThreads];
+            std::vector<ThreadData> args;
+            args.reserve(numThreads);
 
             for (int i = 0; i < numThreads; ++i) {
-                args[i].k = k;
-                args[i].thread_id = i;
+                args.push_back(ThreadData(k, i));
                 pthread_create(&threads[i], NULL, update, (void *)&args[i]);
             }
             for (int i = 0; i < numThreads; ++i) {
