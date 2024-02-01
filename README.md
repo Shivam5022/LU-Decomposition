@@ -1,5 +1,5 @@
 # LU Decomposition
- COL380: Assignment 1 
+COL380: Assignment 1 
 
 ### Pthread Implementation:
 How to Run?

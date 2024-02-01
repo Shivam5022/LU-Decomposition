@@ -7,17 +7,18 @@
 
 #define VERIFY 0
 
-int n = 600;
-int numThreads = 6;
+int n = 8000;
+int numThreads = 1;
 std::vector<std::vector<double>> *matrix;
 std::vector<std::vector<double>> *matrix_1;
 std::vector<std::vector<double>> *L;
 std::vector<std::vector<double>> *U;
 std::vector<int> _pi;
 
-struct ThreadData {
-    int k, thread_id;
-    ThreadData(int k, int thread_id) : k(k), thread_id(thread_id) {}
+struct alignas(64) ThreadData {
+    int k;
+    int start, end;
+    ThreadData() {}
 };
 
 void *initialize(void *arg) {
@@ -28,7 +29,7 @@ void *initialize(void *arg) {
 
     for (int i = thread_id; i < n; i += numThreads) {
         for (int j = 0; j < n; ++j) {
-            (*matrix)[i][j] = dis(gen) + 1;
+            (*matrix)[i][j] = dis(gen);
             (*matrix_1)[i][j] = (*matrix)[i][j];
             (*U)[i][j] = 0;
             (*L)[i][j] = (j == i ? 1 : 0);
@@ -37,12 +38,13 @@ void *initialize(void *arg) {
     return NULL;
 }
 
-void *update(void *arg) {
+void *compute(void *arg) {
     struct ThreadData *data = (ThreadData *)arg;
     int k = data->k;
-    int thread_id = data->thread_id;
+    int start = data->start;
+    int end = data->end;
 
-    for (int i = k + 1 + thread_id; i < n; i += numThreads) {
+    for (int i = start; i < end; i++) {
         for (int j = k + 1; j < n; j++) {
             (*matrix)[i][j] -= (((*U)[k][j]) * ((*L)[i][k]));
         }
@@ -108,7 +110,7 @@ int main() {
             double amax = 0;
             int kk(0);
 
-            for (int i = k; i < n; i++) { // cache un-friendly! change later
+            for (int i = k; i < n; i++) {
                 if (amax < fabs((*matrix)[i][k])) {
                     amax = fabs((*matrix)[i][k]);
                     kk = i;
@@ -136,15 +138,22 @@ int main() {
 
             for (int i = k + 1; i < n; i++) {
                 (*L)[i][k] = ((*matrix)[i][k]) / ((*U)[k][k]);
+            }
+
+            for (int i = k + 1; i < n; i++) {
                 (*U)[k][i] = (*matrix)[k][i];
             }
 
-            std::vector<ThreadData> args;
-            args.reserve(numThreads);
+            ThreadData args[numThreads];
 
             for (int i = 0; i < numThreads; ++i) {
-                args.push_back(ThreadData(k, i));
-                pthread_create(&threads[i], NULL, update, (void *)&args[i]);
+                args[i].k = k;
+                args[i].start = (k + 1) + i * ((n - k - 1) / numThreads);
+                args[i].end = (k + 1) + (i + 1) * ((n - k - 1) / numThreads);
+                if (i + 1 == numThreads && args[i].end != n) {
+                    args[i].end = n;
+                }
+                pthread_create(&threads[i], NULL, compute, (void *)&args[i]);
             }
             for (int i = 0; i < numThreads; ++i) {
                 pthread_join(threads[i], NULL);
