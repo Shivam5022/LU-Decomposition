@@ -7,8 +7,8 @@
 
 #define VERIFY 0
 
-int n = 8000;
-int numThreads = 1;
+int n = 5000;
+int numThreads = 6;
 std::vector<std::vector<double>> *matrix;
 std::vector<std::vector<double>> *matrix_1;
 std::vector<std::vector<double>> *L;
@@ -25,7 +25,7 @@ void *initialize(void *arg) {
     int thread_id = static_cast<int>(reinterpret_cast<long>(arg));
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0.0, 10.0);
+    std::uniform_real_distribution<double> dis(0.0, 1000.0);
 
     for (int i = thread_id; i < n; i += numThreads) {
         for (int j = 0; j < n; ++j) {
@@ -103,7 +103,7 @@ int main() {
         pthread_join(threads[i], NULL);
     }
 
-    {
+    {   // BENCHMARK STARTS
         Timer t;
 
         for (int k = 0; k < n; k++) {
@@ -118,13 +118,12 @@ int main() {
             }
 
             if (amax == 0) {
-                std::cout << "Matrix Is Singular\n";
+                std::cout << "MATRIX Is SINGULAR\n";
                 std::cout << k << '\n';
                 exit(0);
             }
 
             if (k != kk) {
-                // swapping things here!
                 std::swap(_pi[k], _pi[kk]);
                 for (int j = 0; j < n; j++) {
                     std::swap((*matrix)[k][j], (*matrix)[kk][j]);
@@ -137,15 +136,14 @@ int main() {
             (*U)[k][k] = (*matrix)[k][k];
 
             for (int i = k + 1; i < n; i++) {
-                (*L)[i][k] = ((*matrix)[i][k]) / ((*U)[k][k]);
-            }
-
-            for (int i = k + 1; i < n; i++) {
                 (*U)[k][i] = (*matrix)[k][i];
             }
 
-            ThreadData args[numThreads];
+            for (int i = k + 1; i < n; i++) {
+                (*L)[i][k] = ((*matrix)[i][k]) / ((*U)[k][k]);
+            }
 
+            ThreadData args[numThreads];
             for (int i = 0; i < numThreads; ++i) {
                 args[i].k = k;
                 args[i].start = (k + 1) + i * ((n - k - 1) / numThreads);
@@ -159,6 +157,7 @@ int main() {
                 pthread_join(threads[i], NULL);
             }
         }
+        // BENCHMARK ENDS
     }
 
     if (VERIFY == 1) {
