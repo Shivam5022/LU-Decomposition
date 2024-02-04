@@ -1,8 +1,11 @@
 # Compiler
 CXX = g++
 
+N = 5000
+THREADS = 5
+
 # Compiler flags
-CXXFLAGS = -std=c++20 -Wall -O3
+CXXFLAGS = -std=c++11 -Wall -O3
 
 # Source file
 SRC = pthread.cpp timer.cpp
@@ -16,7 +19,7 @@ $(TARGET): $(SRC)
 
 # Run rule
 run:$(TARGET)
-	./$(TARGET)
+	./$(TARGET) $(N) $(THREADS)
 
 # Clean rule
 clean:

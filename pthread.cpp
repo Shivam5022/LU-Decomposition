@@ -7,8 +7,8 @@
 
 #define VERIFY 0
 
-int n = 5000;
-int numThreads = 6;
+int n;
+int numThreads;
 std::vector<std::vector<double>> *matrix;
 std::vector<std::vector<double>> *matrix_1;
 std::vector<std::vector<double>> *L;
@@ -80,8 +80,14 @@ matrixMultiply(const std::vector<std::vector<double>> *A,
     return result;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
+    if (argc != 3) {
+        std::cout << "ENTER CORRECT ARGUMENTS\n";
+        exit(0);
+    }
+    n = atoi(argv[1]);
+    numThreads = atoi(argv[2]);
     std::cout << "Number of Threads: " << numThreads << '\n';
     std::cout << "Matrix Dimention: " << n << '\n';
 
@@ -103,7 +109,7 @@ int main() {
         pthread_join(threads[i], NULL);
     }
 
-    {   // BENCHMARK STARTS
+    { // BENCHMARK STARTS
         Timer t;
 
         for (int k = 0; k < n; k++) {
@@ -118,7 +124,7 @@ int main() {
             }
 
             if (amax == 0) {
-                std::cout << "MATRIX Is SINGULAR\n";
+                std::cout << "MATRIX IS SINGULAR\n";
                 std::cout << k << '\n';
                 exit(0);
             }
