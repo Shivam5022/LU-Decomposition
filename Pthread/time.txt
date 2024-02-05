@@ -1,0 +1,7 @@
+
+Dimention=3000
+Threads=1, Time: 3.5
+Threads=2, Time: 3
+Threads=4, Time: 3.02
+Threads=8, Time: 2.83
+Threads=16, Time: 2.95

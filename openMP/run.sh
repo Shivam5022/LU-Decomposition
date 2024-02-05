@@ -2,9 +2,9 @@
 
 # Set the path to your C++ program
 cpp_program="./prog"
-output_file="time.txt"
+output_file="omp-time.txt"
 
-dimentions=1000
+dimentions=3000
 
 start_value=1
 end_value=16

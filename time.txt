@@ -1,6 +1,0 @@
-Dimention=1000
-Threads=1, Time: 0.136
-Threads=2, Time: 0.0915
-Threads=4, Time: 0.0818
-Threads=8, Time: 0.0964
-Threads=16, Time: 0.137
