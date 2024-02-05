@@ -88,8 +88,11 @@ int main(int argc, char *argv[]) {
     }
     n = atoi(argv[1]);
     numThreads = atoi(argv[2]);
-    std::cout << "Number of Threads: " << numThreads << '\n';
-    std::cout << "Matrix Dimention: " << n << '\n';
+
+    std::cerr << "[DEBUG] "
+              << "Number of Threads: " << numThreads << '\n';
+    std::cerr << "[DEBUG] "
+              << "Matrix Dimention: " << n << '\n';
 
     matrix = new std::vector<std::vector<double>>(n, std::vector<double>(n));
     matrix_1 = new std::vector<std::vector<double>>(n, std::vector<double>(n));
@@ -185,7 +188,7 @@ int main(int argc, char *argv[]) {
         }
 
         norm = std::sqrt(norm);
-        std::cout << "The error norm is: " << norm << '\n';
+        std::cerr << "[DEBUG] The error norm is: " << norm << '\n';
 
         delete P;
         delete LU;

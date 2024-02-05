@@ -20,6 +20,8 @@ void Timer::stop() {
     double ms = duration * 0.001;
     double sec = ms * 0.001;
 
-    std::cout << duration << " us (" << ms << " ms) (" << std::setprecision(3)
-              << sec << " seconds)\n";
+    std::cerr << "[DEBUG] " << duration << " us (" << ms << " ms) ("
+              << std::setprecision(3) << sec << " seconds)\n";
+
+    std::cout << std::setprecision(3) << sec << '\n';
 }
