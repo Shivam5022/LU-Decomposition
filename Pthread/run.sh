@@ -4,7 +4,7 @@
 cpp_program="./prog"
 output_file="pthread-time.txt"
 
-dimentions=3000
+dimentions=300
 
 start_value=1
 end_value=16

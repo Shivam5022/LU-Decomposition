@@ -1,0 +1,6 @@
+Dimention=300
+Threads=1, Time: 0.0119
+Threads=2, Time: 0.0128
+Threads=4, Time: 0.0158
+Threads=8, Time: 0.0244
+Threads=16, Time: 0.0429
