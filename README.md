@@ -194,6 +194,6 @@ Efficiency $\tau_N = \frac{T_1}{T_N \times N}$  and Speedup $S_N = \frac{T_1}{T_
 
 Below is the plot for Efficiency vs Number of Threads for $8000 \times 8000$ matrix.
 
-![](/Users/shivamverma/IITD/SEM8/PARALLEL/A1/LU-Decomposition/Pthread/plots/eff.png)
+![](Pthread/plots/eff.png)
 
 ##### <u>OpenMP</u>
