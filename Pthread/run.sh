@@ -4,9 +4,9 @@
 cpp_program="./prog"
 output_file="pthread-time.txt"
 
-dimentions=300
+dimentions=8000
 
-start_value=1
+start_value=8
 end_value=16
 
 clang-format -i *.cpp
